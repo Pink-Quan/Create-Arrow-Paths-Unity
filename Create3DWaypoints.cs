@@ -40,32 +40,9 @@ public class Create3DWaypoints : MonoBehaviour
             Vector3 dir = (paths[pathIndexs[index]+1] - paths[pathIndexs[index]]).normalized;
             transform.position += dir * velocity * deltaTime;
 
-            var up = transform.rotation * Vector3.up;
-            var angle = Vector3.Angle(up, lookedTargetPos - transform.position);
-            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y,angle));
-            //transform.rotation = RotateCustom(transform, Vector3.forward, angle);
-        }
-
-        public Quaternion RotateCustom(TransformAccess transform, Vector3 axis, float angle, Space relativeTo = Space.Self)
-        {
-            Quaternion rotation = Quaternion.identity;
-
-            if (relativeTo == Space.Self)
-            {
-                rotation = Quaternion.AngleAxis(angle, axis);
-            }
-            else if (relativeTo == Space.World)
-            {
-                rotation = Quaternion.AngleAxis(angle, InverseTransformDirectionCustom(transform,axis));
-            }
-
-            return rotation * transform.rotation;
-        }
-
-        public Vector3 InverseTransformDirectionCustom(TransformAccess transform, Vector3 direction)
-        {
-            Quaternion inverseRotation = Quaternion.Inverse(transform.rotation);
-            return inverseRotation * direction;
+            Vector3 forward = transform.rotation * Vector3.forward;
+            var angle =Vector3.SignedAngle(lookedTargetPos - transform.position, Vector3.up, forward);
+            transform.localRotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y,angle));
         }
     }
     private void Start()
